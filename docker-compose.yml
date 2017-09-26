@@ -5,13 +5,14 @@ services:
   app1:
     image: python-microservices-base
     restart: always
-    network_mode: host
     volumes:
       - ./app1:/app
 
   app2:
     image: python-microservices-base
     restart: always
-    network_mode: host
     volumes:
       - ./app2:/app
+
+  activemq:
+    image: webcenter/activemq

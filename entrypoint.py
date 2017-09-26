@@ -10,7 +10,10 @@ class Handler(PatternMatchingEventHandler):
 
     @staticmethod
     def on_any_event(event):
-       subprocess.check_call(['pkill', '--signal', '9', '-f', '/app/main.py'], stdout=subprocess.DEVNULL)
+       try:
+          subprocess.check_call(['pkill', '--signal', '9', '-f', '/app/main.py'], stdout=subprocess.DEVNULL)
+       except:
+          pass
        subprocess.Popen(['python3', '/app/main.py'])
 
 
