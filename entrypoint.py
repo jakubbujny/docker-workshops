@@ -20,7 +20,7 @@ class Handler(PatternMatchingEventHandler):
 event_handler = Handler(patterns=["*.py"])
 observer.schedule(event_handler, '/app', recursive=True)
 observer.start()
-try:
+try: 
     subprocess.call(['python3', '/app/main.py'])
 except:
     observer.stop()
