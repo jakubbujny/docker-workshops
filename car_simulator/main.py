@@ -1,5 +1,5 @@
 import time  
-import stomp
+import pika
 import random
 import json
 import datetime
@@ -38,11 +38,11 @@ def calculateState():
    currentFuelUsage = int(currentSpeed/10)
 
 
-time.sleep(5)  
-queueConn = stomp.Connection([('activemq', 61613)])
-
-queueConn.start()
-queueConn.connect('admin', 'password', wait=True)
+time.sleep(5)
+connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq'))
+channel = connection.channel()
+channel.exchange_declare(exchange='incoming',
+                         exchange_type='fanout')
 while True:
     sys.stdout.flush()
     calculateState()
@@ -55,7 +55,9 @@ while True:
         'group' : group,
         'timestamp' : int(datetime.datetime.now().timestamp())
     })
-    queueConn.send(body=body, destination='/queue/test')
+    channel.basic_publish(exchange='incoming',
+                      routing_key='',
+                      body=body)
    
     print("message sent: "+body)
     time.sleep(1)

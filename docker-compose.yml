@@ -5,25 +5,13 @@ services:
   car_simulator:
     image: python-microservices-base
     depends_on: 
-      - activemq
+      - rabbitmq
     restart: always
     volumes:
       - ./car_simulator:/app
 
 
-  app1:
-    image: python-microservices-base
-    depends_on:
-      - activemq
-    restart: always
-    volumes:
-      - ./app1:/app
-
-  app2:
-    image: python-microservices-base
-    restart: always
-    volumes:
-      - ./app2:/app
-
-  activemq:
-    image: webcenter/activemq
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - 15672:15672
