@@ -4,14 +4,22 @@ import random
 import json
 import datetime
 import sys
+import os
 
 MAX_SPEED = 40
 MIN_SPEED = 10
 
-id = 1
+hostname = os.environ['HOSTNAME']
+id = 0
+
+for c in hostname:
+   id += ord(c)
+
+print("Starting with id: "+str(id))
+
 group = random.randint(1,5)
 
-random.seed(5)
+random.seed(id)
 currentSpeed = random.randint(10,40)
 currentFuel = 60000
 currentFuelUsage = int(currentSpeed/10)
