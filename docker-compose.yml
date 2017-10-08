@@ -18,6 +18,17 @@ services:
     volumes:
       - ./db_saver:/app
 
+  query_service:
+    image: python-microservices-base
+    depends_on:
+      - rabbitmq
+    restart: always
+    volumes:
+      - ./query_service:/app
+    ports:
+      - 8000:80
+
+
   rabbitmq:
     image: rabbitmq:3-management
     ports:

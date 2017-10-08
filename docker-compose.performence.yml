@@ -1,0 +1,9 @@
+version: '3'
+
+services:
+
+  k6:
+    image: loadimpact/k6
+    command: run --vus 300 --duration 30s /script/script.js
+    volumes:
+      - ./k6:/script

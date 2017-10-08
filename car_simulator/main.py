@@ -17,7 +17,7 @@ for c in hostname:
 
 print("Starting with id: "+str(id))
 
-group = random.randint(1,5)
+group = random.randint(1,3)
 
 random.seed(id)
 currentSpeed = random.randint(10,40)
