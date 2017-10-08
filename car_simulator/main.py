@@ -21,7 +21,7 @@ group = random.randint(1,5)
 
 random.seed(id)
 currentSpeed = random.randint(10,40)
-currentFuel = 60000
+currentFuel = 600000
 currentFuelUsage = int(currentSpeed/10)
 
 def randomizeState():
@@ -42,13 +42,13 @@ def randomizeState():
 def calculateState():
    global currentFuel
    global currentFuelUsage
-   currentFuel -= currentFuelUsage      
+   currentFuel -= (currentFuelUsage/10)
    currentFuelUsage = int(currentSpeed/10)
 
 connection = None
 
 while connection is None:
-   time.sleep(1)
+   time.sleep(0.1)
    try:
       connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq'))
    except:
@@ -74,7 +74,7 @@ while True:
                       routing_key='',
                       body=body)
    
-    print("message sent: "+body)
+    #print("message sent: "+body)
     time.sleep(1)
 
 conn.disconnect()

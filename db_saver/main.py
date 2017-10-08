@@ -3,6 +3,7 @@ import json
 import os
 import sys
 import time
+from pymongo import MongoClient
 
 hostname = os.environ['HOSTNAME']
 id = 0
@@ -10,29 +11,39 @@ id = 0
 for c in hostname:
    id += ord(c)
 
-connection = None
+rabbitConnection = None
 
-while connection is None:
+while rabbitConnection is None:
    time.sleep(1)
    try:
-      connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq'))
+      rabbitConnection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq'))
    except:
-      print("Error in connection")
+      print("Error in connection to rabbit")
+      sys.stdout.flush()
+
+mongoConnection = None
+while mongoConnection is None:
+   time.sleep(1)
+   try:
+      mongoConnection = MongoClient('mongo', 27017)
+   except:
+      print("Error in connection to mongo")
       sys.stdout.flush()
    
-channel = connection.channel()
+channel = rabbitConnection.channel()
 channel.exchange_declare(exchange='incoming',
                          exchange_type='fanout')
 
-result = channel.queue_declare(exclusive=True)
-queue_name = result.method.queue
+queue_name = 'db_saver'
+result = channel.queue_declare(queue=queue_name, exclusive=False)
 
 channel.queue_bind(exchange='incoming',
                    queue=queue_name)
 
 def callback(ch, method, properties, body):
-    print(" [x] %r" % body)
-    sys.stdout.flush()
+    #print(" [x] %r" % body)
+    global mongoConnection
+    mongoConnection.cars.incoming.insert_one(json.loads(body))
     ch.basic_ack(delivery_tag = method.delivery_tag)
 
 channel.basic_consume(callback,
