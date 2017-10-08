@@ -26,9 +26,16 @@ while mongoConnection is None:
 app = flask.Flask(__name__)
 
 @app.route('/average-speed-group/<groupId>')
-def getAverageSpeedForId(groupId):
+def getAverageSpeedForGroup(groupId):
    global mongoConnection
    pipeline = [{ "$match": {"group" : int(groupId) }},{ "$group": {"_id": None,"average": { "$avg": "$speed" }}}]
+   result = list(mongoConnection.cars.incoming.aggregate(pipeline))[0]['average']
+   return str(result)
+
+@app.route('/average-speed/<carId>')
+def getAverageSpeedForId(carId):
+   global mongoConnection
+   pipeline = [{ "$match": {"id" : int(carId) }},{ "$group": {"_id": None,"average": { "$avg": "$speed" }}}]
    result = list(mongoConnection.cars.incoming.aggregate(pipeline))[0]['average']
    return str(result)
 
