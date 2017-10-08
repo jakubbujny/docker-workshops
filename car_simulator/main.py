@@ -45,9 +45,16 @@ def calculateState():
    currentFuel -= currentFuelUsage      
    currentFuelUsage = int(currentSpeed/10)
 
+connection = None
 
-time.sleep(5)
-connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq'))
+while connection is None:
+   time.sleep(1)
+   try:
+      connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq'))
+   except:
+      print("Error in connection")
+      sys.stdout.flush()
+
 channel = connection.channel()
 channel.exchange_declare(exchange='incoming',
                          exchange_type='fanout')

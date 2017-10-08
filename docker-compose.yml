@@ -10,6 +10,13 @@ services:
     volumes:
       - ./car_simulator:/app
 
+  db_saver:
+    image: python-microservices-base
+    depends_on:
+      - rabbitmq
+    restart: always
+    volumes:
+      - ./db_saver:/app
 
   rabbitmq:
     image: rabbitmq:3-management
