@@ -48,7 +48,7 @@ def calculateState():
 connection = None
 
 while connection is None:
-   time.sleep(0.1)
+   time.sleep(1)
    try:
       connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq'))
    except:
@@ -75,6 +75,6 @@ while True:
                       body=body)
    
     #print("message sent: "+body)
-    time.sleep(1)
+    time.sleep(0.1)
 
 conn.disconnect()
