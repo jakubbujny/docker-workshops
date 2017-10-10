@@ -6,7 +6,6 @@ services:
     image: python-microservices-base
     depends_on: 
       - rabbitmq
-    restart: always
     volumes:
       - ./car_simulator:/app
 
@@ -14,20 +13,34 @@ services:
     image: python-microservices-base
     depends_on:
       - rabbitmq
-    restart: always
     volumes:
       - ./db_saver:/app
 
   query_service:
     image: python-microservices-base
     depends_on:
-      - rabbitmq
-    restart: always
+      - mongo
     volumes:
       - ./query_service:/app
     ports:
       - 8000:80
 
+  query_service_redis:
+    image: python-microservices-base
+    depends_on:
+      - redis
+    volumes:
+      - ./query_service_redis:/app
+    ports:
+      - 8001:80
+
+  redis_updater:
+    image: python-microservices-base
+    depends_on:
+      - mongo
+      - redis
+    volumes:
+      - ./redis_updater:/app
 
   rabbitmq:
     image: rabbitmq:3-management
@@ -40,6 +53,17 @@ services:
   mongo-express:
     image: mongo-express
     ports:
-      - 8081:8081
+      - 9091:8081
     links:
       - mongo
+
+  redis:
+    image: redis
+
+  redis-commander:
+    image: diyan/redis-commander
+    command: --redis-host redis
+    links:
+      - redis
+    ports:
+      - 9092:8081

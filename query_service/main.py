@@ -39,4 +39,4 @@ def getAverageSpeedForId(carId):
    result = list(mongoConnection.cars.incoming.aggregate(pipeline))[0]['average']
    return str(result)
 
-app.run(host='0.0.0.0', port=80)
+app.run(host='0.0.0.0', port=80, threaded = True)
