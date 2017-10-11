@@ -32,11 +32,4 @@ def getAverageSpeedForGroup(groupId):
    result = list(mongoConnection.cars.incoming.aggregate(pipeline))[0]['average']
    return str(result)
 
-@app.route('/average-speed/<carId>')
-def getAverageSpeedForId(carId):
-   global mongoConnection
-   pipeline = [{ "$match": {"id" : int(carId) }},{ "$group": {"_id": None,"average": { "$avg": "$speed" }}}]
-   result = list(mongoConnection.cars.incoming.aggregate(pipeline))[0]['average']
-   return str(result)
-
 app.run(host='0.0.0.0', port=80, threaded = True)
