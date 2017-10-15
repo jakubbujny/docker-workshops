@@ -42,6 +42,28 @@ services:
     volumes:
       - ./redis_updater:/app
 
+  report_service:
+    image: python-microservices-base
+    depends_on:
+      - mongo
+      - redis
+      - rabbitmq
+    volumes:
+      - ./report_service:/app
+    ports: 
+      - 8002:80
+
+  report_worker:
+    image: python-microservices-base
+    depends_on:
+      - mongo
+      - redis
+      - rabbitmq
+    volumes:
+      - ./report_worker:/app
+
+
+
   rabbitmq:
     image: rabbitmq:3-management
     ports:

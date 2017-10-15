@@ -35,7 +35,7 @@ while mongoConnection is None:
 
 
 while True:
-   time.sleep(0.1)
+   time.sleep(1)
    pipeline = [{ "$group": {"_id":"$group", "average": { "$avg": "$speed" }}}]
    resultList = list(mongoConnection.cars.incoming.aggregate(pipeline))
    sys.stdout.flush()
