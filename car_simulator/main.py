@@ -6,8 +6,8 @@ import datetime
 import sys
 import os
 
-MAX_SPEED = 40
-MIN_SPEED = 10
+MAX_SPEED = 40 # m/s
+MIN_SPEED = 10 # m/s
 
 hostname = os.environ['HOSTNAME']
 id = 0
@@ -45,17 +45,17 @@ def calculateState():
    currentFuel -= (currentFuelUsage/10)
    currentFuelUsage = int(currentSpeed/10)
 
-connection = None
+rabbitConnection = None
 
-while connection is None:
+while rabbitConnection is None:
    time.sleep(1)
    try:
-      connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq'))
+      rabbitConnection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq'))
    except:
       print("Error in connection")
       sys.stdout.flush()
 
-channel = connection.channel()
+channel = rabbitConnection.channel()
 channel.exchange_declare(exchange='incoming',
                          exchange_type='fanout')
 while True:
@@ -74,7 +74,6 @@ while True:
                       routing_key='',
                       body=body)
    
-    #print("message sent: "+body)
     time.sleep(0.1)
 
 conn.disconnect()
