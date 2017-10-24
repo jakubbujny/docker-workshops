@@ -1,0 +1,76 @@
+version: '3'
+
+services:
+
+  car_simulator:
+    image: python-microservices-base
+    depends_on:
+      - rabbitmq
+    volumes:
+      - ./car_simulator:/app
+
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - 15672:15672
+
+  mongo:
+    image: mongo
+
+  mongo-express:
+    image: mongo-express
+    ports:
+      - 9091:8081
+    links:
+      - mongo
+
+  db_saver:
+    image: python-microservices-base
+    depends_on:
+      - rabbitmq
+      - mongo
+    volumes:
+      - ./db_saver:/app
+
+
+  query_service:
+    image: python-microservices-base
+    depends_on:
+      - mongo
+    volumes:
+      - ./query_service:/app
+    ports:
+      - 8000:80
+
+
+  redis:
+    image: redis
+
+
+  redis_updater:
+    image: python-microservices-base
+    depends_on:
+      - mongo
+      - redis
+    volumes:
+      - ./redis_updater:/app
+
+  redis-commander:
+    image: diyan/redis-commander
+    command: --redis-host redis
+    links:
+      - redis
+    ports:
+      - 9092:8081
+
+
+  query_service_redis:
+    image: python-microservices-base
+    depends_on:
+      - redis
+    volumes:
+      - ./query_service_redis:/app
+    ports:
+      - 8001:80
+

@@ -1,0 +1,37 @@
+version: '3'
+
+services:
+
+  car_simulator:
+    image: python-microservices-base
+    depends_on:
+      - rabbitmq
+    volumes:
+      - ./car_simulator:/app
+
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - 15672:15672
+
+  mongo:
+    image: mongo
+
+  mongo-express:
+    image: mongo-express
+    ports:
+      - 9091:8081
+    links:
+      - mongo
+
+  db_saver:
+    image: python-microservices-base
+    depends_on:
+      - rabbitmq
+      - mongo
+    volumes:
+      - ./db_saver:/app
+
+
+

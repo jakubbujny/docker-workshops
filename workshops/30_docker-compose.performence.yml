@@ -1,0 +1,8 @@
+version: '3'
+
+services:
+
+  k6:
+    image: loadimpact/k6
+    volumes:
+      - ./k6:/script
