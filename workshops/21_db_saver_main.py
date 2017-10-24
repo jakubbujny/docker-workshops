@@ -5,12 +5,7 @@ import sys
 import time
 from pymongo import MongoClient
 
-hostname = os.environ['HOSTNAME']
-id = 0
-
-for c in hostname:
-   id += ord(c)
-
+#We need rabbit connection here
 rabbitConnection = None
 
 while rabbitConnection is None:
@@ -21,6 +16,7 @@ while rabbitConnection is None:
       print("Error in connection to rabbit")
       sys.stdout.flush()
 
+#We need mongo connection here
 mongoConnection = None
 while mongoConnection is None:
    time.sleep(1)
@@ -29,7 +25,8 @@ while mongoConnection is None:
    except:
       print("Error in connection to mongo")
       sys.stdout.flush()
-   
+
+#Exchange and bounded queue here
 channel = rabbitConnection.channel()
 channel.exchange_declare(exchange='incoming',
                          exchange_type='fanout')
@@ -40,8 +37,8 @@ result = channel.queue_declare(queue=queue_name, exclusive=False)
 channel.queue_bind(exchange='incoming',
                    queue=queue_name)
 
+#Callback saving to mongo 
 def callback(ch, method, properties, body):
-    #print(" [x] %r" % body)
     global mongoConnection
     mongoConnection.cars.incoming.insert_one(json.loads(body))
     ch.basic_ack(delivery_tag = method.delivery_tag)
@@ -51,3 +48,4 @@ channel.basic_consume(callback,
                       queue=queue_name)
 
 channel.start_consuming()
+
