@@ -11,12 +11,6 @@ import pika
 import traceback
 import redis
 
-hostname = os.environ['HOSTNAME']
-id = 0
-
-for c in hostname:
-   id += ord(c)
-
 redisConnection = None
 while redisConnection is None:
    time.sleep(1)
@@ -41,13 +35,13 @@ while mongoConnection is None:
 
 app = flask.Flask(__name__)
 
-def publishTasksToRabbit(taskId, idsList):
+def publishTasksToRabbit(taskId, carIdsList):
     rabbitConnection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq'))
 
     channel = rabbitConnection.channel()
     channel.queue_declare(queue='report_queue', durable=True)
-    for id in idsList:
-        taskToPublish = {"taskId": taskId, "id" : id}
+    for carId in carIdsList:
+        taskToPublish = {"taskId": taskId, "id" : carId}
         channel.basic_publish(exchange='',
                               routing_key='report_queue',
                               body=json.dumps(taskToPublish),
